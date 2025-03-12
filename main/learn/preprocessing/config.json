@@ -1,0 +1,7 @@
+{
+    "eeg_path": "sample_data/MEG/sample/sample_audvis_raw.fif",
+    "noise_path": "sample_data/MEG/sample/ernoise_raw.fif",
+    "event_path": "sample_data/MEG/sample/sample_audvis_raw.fif",
+    "l_freq": 1.0,
+    "h_freq": 40.0
+}

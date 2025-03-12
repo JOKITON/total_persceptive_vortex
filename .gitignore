@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Project custom
+*.fif
+*.pkl
+*.eve
+*.npy
+main/learn/sample_data
+
 # Distribution / packaging
 .Python
 build/

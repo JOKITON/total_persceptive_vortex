@@ -1,0 +1,68 @@
+{
+    "event_dict_oph" : {
+        "do/left_hand" : 1,
+        "do/right_hand" : 2,
+        "rest" : 3
+    },
+    "event_dict_imgh" : {
+        "imagine/left_hand" : 1,
+        "imagine/right_hand" : 2,
+        "rest" : 3
+    },
+    "event_dict_ophf" : {
+        "do/feet" : 1,
+        "do/hands" : 2,
+        "rest" : 3
+    },
+    "event_dict_imghf" : {
+        "imagine/feet" : 1,
+        "imagine/hands" : 2,
+        "rest" : 3
+    },
+
+    "event_dict_hf" : {
+        "do/feet" : 1,
+        "do/hands" : 2,
+        "imagine/feet" : 3,
+        "imagine/hands" : 4,
+        "rest" : 5
+    },
+    "event_dict_h" : {
+        "do/left_hand" : 1,
+        "do/right_hand" : 2,
+        "imagine/left_hand" : 3,
+        "imagine/right_hand" : 4,
+        "rest" : 5
+    },
+
+    "group_type" : "hands",
+
+    "ev_blist_one" : [[1, 2]],
+    "ev_blist_two" : [[1, 3]],
+    "ev_blist_three" : [[2, 3]],
+    "ev_blist_four" : [[1, 2, 3]],
+    "ev_blist_five" : [[1, 3], [1, 2]],
+    "ev_blist_six" : [[2, 3], [1, 2]],
+
+    "ev_mlist_one" : [[1, 3]],
+    "ev_mlist_two" : [[2, 5], [1, 2]],
+    "ev_mlist_three" : [[2, 4]],
+    "ev_mlist_four" : [[1, 4]],
+    "ev_mlist_six" : [[3, 5], [3, 4]],
+    "ev_mlist_seven" : [[1, 5]],
+    "ev_mlist_eight" : [[1, 2, 3, 4, 5]],
+
+    "n_components" : 32,
+    "frequency_sample" : 160,
+
+    "tmin" : -2,
+    "tmax" : 2,
+
+    "freq_exec_hands_00" : [[8, 12], [16, 30]],
+    "freq_exec_hands_01" : [[8, 12], [16, 20], [20, 30]],
+    "freq_exec_hands_02": [[4, 8], [8, 12], [16, 20], [20, 30], [30, 40]],
+    "freq_exec_hf" : [[8, 12], [16, 30]],
+    "freq_img_hands" : [[8, 12], [16, 30]],
+    "freq_img_hf" : [[8, 12], [16, 30]]
+
+}

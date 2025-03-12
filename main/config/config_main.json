@@ -1,0 +1,59 @@
+{
+    "path_raw_h": "data/raw/sample_mmi_h_raw.fif",
+    "path_raw_hf": "data/raw/sample_mmi_hf_raw.fif",
+    
+    "path_filt_h": "data/filtered/sample_mmi_h_filt_raw.fif",
+    "path_filt_hf": "data/filtered/sample_mmi_hf_filt_raw.fif",
+
+    "path_clean_h": "data/ica/sample_mmi_h_clean_raw.fif",
+    "path_clean_hf": "data/ica/sample_mmi_hf_clean_raw.fif",
+
+    "path_ica_h": "data/ica/sample_mmi_h_ica.fif",
+    "path_ica_hf": "data/ica/sample_mmi_hf_ica.fif",
+    
+    "path_epochs": "data/epochs/sample_mmi_h_epo.fif",
+    
+    "path_events_exec_h": "data/events/sample_mmi_h_exec.eve",
+    "path_events_exec_hf": "data/events/sample_mmi_hf_exec.eve",
+
+    "path_events_img_h": "data/events/sample_mmi_h_img.eve",
+    "path_events_img_hf": "data/events/sample_mmi_hf_img.eve",
+
+    "path_events_h": "data/events/sample_mmi_h.eve",
+    "path_events_hf": "data/events/sample_mmi_hf.eve",
+
+    "path_lda": "data/models/lda_model.pkl",
+    "path_svm": "data/models/svm_model.pkl",
+    "path_rf": "data/models/rf_model.pkl",
+
+    "path_X_train": "data/testing_data/X_train.npy",
+    "path_y_train": "data/testing_data/y_train.npy",
+
+    "path_X_test": "data/testing_data/X_test.npy",
+    "path_y_test": "data/testing_data/y_test.npy",
+
+    "verbose": "False",
+    "fast_start" : "False",
+    "is_event_local" : "True",
+    "is_raw_local" : "True",
+    "is_raw_filt_local" : "True",
+    "is_ica_local" : "True",
+    "is_epoch_local" : "False",
+
+    "n_subjects" : 20,
+
+    "run_rest" : [1, 2],
+
+    "run_exec_h" : [3, 7, 11],
+    "run_exec_hf" : [5, 9, 13],
+
+    "run_img_h" : [4, 8, 12],
+    "run_img_hf" : [6, 10, 14],
+
+    "montage" : "standard_1005",
+
+    "l_freq": 1,
+    "h_freq": 30.0,
+
+    "n_components_ica" : 64
+}
