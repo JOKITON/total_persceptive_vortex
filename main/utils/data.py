@@ -127,6 +127,7 @@ def read_data(type, config, base_path, verbose=False):
 	elif type != "ica":
 		data_h = mne.io.read_raw_fif(path_h, preload=True, verbose=verbose)
 		data_hf = mne.io.read_raw_fif(path_hf, preload=True, verbose=verbose)
+		print(data_h, data_hf)
 	else:
 		raise ValueError(f"Invalid type. {type}")
 
@@ -146,6 +147,7 @@ def fetch_data(subject, runs, event_dict, montage, verbose=False):
 
 			# Create a montage object and set it to the raw object
 			raw.set_montage(montage)
+			raw.set_eeg_reference(projection=True)
 
 			# Load the events from the annotations
 			events, _ = mne.events_from_annotations(raw, event_id=dict(T0=1,T1=2,T2=3), verbose=verbose)

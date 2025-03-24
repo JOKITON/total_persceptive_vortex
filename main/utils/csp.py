@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 import mne
 from mne.decoding import CSP
-# from csp.CSPObj import CSP
+# from csp.CSPObj_cheat import CSP
  
 def butter_bandpass(lowcut, highcut, fs, order=5):
 		""" Creates a bandpass Butter filter """
@@ -23,12 +23,12 @@ def compute_csp(epochs_data, labels, freq_bands, n_components, fs, epochs_info=N
 	all_features = []
 	print(epochs_data.shape, labels.shape)
 	for lowcut, highcut in freq_bands:
-		# Filtrar los datos en la banda seleccionada
+		# Filter data on the freq bands
 		filtered_data = np.array([
 			apply_bandpass_filter(epoch, lowcut, highcut, fs) for epoch in epochs_data
 		])
 
-		# Aplicar CSP en la banda filtrada
+		# Apply CSP on the filtered data
 		csp = CSP(n_components=n_components, reg='ledoit_wolf', log=True, norm_trace=False)
 		features = csp.fit_transform(filtered_data, labels)
 
@@ -37,7 +37,7 @@ def compute_csp(epochs_data, labels, freq_bands, n_components, fs, epochs_info=N
 
 		all_features.append(features)
 
-	# Concatenar características de todas las bandas
+	# Concatenate features all into one
 	all_features = np.concatenate(all_features, axis=1)
 
 	return all_features, csp

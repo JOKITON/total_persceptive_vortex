@@ -1,11 +1,7 @@
 {
-	"csp__n_components_00": [32, 64, 256],
-	"csp__n_components_01": [4, 8, 12],
+	"csp__n_components_00": [32, 64, 128],
+	"csp__n_components_01": [6, 12, 18],
 	"csp__n_components_02": [1, 2, 4],
-
-	"pca__n_components_00": [16, 32, 64],
-	"pca__n_components_01": [4, 8, 12],
-	"pca__n_components_02": [1, 2, 4],
 
 	"svm__C_00": [250, 350, 500],
 	"svm__C_01": [75, 100, 125],
@@ -27,5 +23,13 @@
 
 	"rf__min_samples_split_00": [15, 25, 50],
 	"rf__min_samples_split_01": [10, 15, 20],
-	"rf__min_samples_split_02": [3, 5, 8]
+	"rf__min_samples_split_02": [3, 5, 8],
+
+	"mlp__max_iter_00": [1000, 2000],
+	"mlp__max_iter_01": [250, 500],
+	"mlp__max_iter_02": [100, 200],
+
+	"mlp__hidden_layer_sizes_00": [[200, 300], [400, 500]],
+	"mlp__hidden_layer_sizes_01": [[100, 200], [150, 300]],
+	"mlp__hidden_layer_sizes_02": [[50, 100], [75, 150]]
 }

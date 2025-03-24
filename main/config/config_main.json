@@ -40,7 +40,7 @@
     "is_ica_local" : "True",
     "is_epoch_local" : "False",
 
-    "n_subjects" : 20,
+    "n_subjects" : 50,
 
     "run_rest" : [1, 2],
 
@@ -52,8 +52,8 @@
 
     "montage" : "standard_1005",
 
-    "l_freq": 1,
+    "l_freq": 7,
     "h_freq": 30.0,
 
-    "n_components_ica" : 64
+    "n_components_ica" : 48
 }

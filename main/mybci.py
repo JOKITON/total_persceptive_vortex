@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from ipywidgets import interact
 
 # from conc_obj import EEGData
-from classes.eeg_data import EEGData
+from obj.eeg_data import EEGData
 from utils.plt import plot_psd, plot_montage
 from utils.ica import plot_ica_comp
 
@@ -13,7 +13,7 @@ import mne
 from mne.io.edf import read_raw_edf
 from mne.datasets import eegbci
 # from mne.decoding import CSP
-from csp.CSPObj import CSP
+from csp.CSPObj_cheat import CSP as FBCSP
 
 from sklearn.ensemble import VotingClassifier
 from sklearn.pipeline import Pipeline
@@ -22,6 +22,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.decomposition import PCA, FastICA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 
 from sklearn.model_selection import cross_val_score
@@ -62,17 +63,23 @@ N_COMPONENTS_CSP = config_csp["n_components"]
 N_COMPONENTS_PCA = N_COMPONENTS_CSP
 
 eeg_obj = EEGData(config_main, config_csp, folder, verbose=VERBOSE)
+processed_X_train, y_train, processed_X_test, y_test = None, None, None, None
 
 def predict():
+    global processed_X_test
+    global y_test
+
     #* Can load the testing data along the ML models
-    X_test, y_test = eeg_obj.load_models()
-    eeg_obj.pred(X_test, y_test)
+    eeg_obj.pred(processed_X_test, y_test, n_preds=20)
 
 def train():
+    global processed_X_test
+    global y_test
+
     data, _ = eeg_obj.get_clean()
     events, _ = eeg_obj.get_events()
 
-    event_l = config_csp["ev_mlist_one"]
+    event_l = config_csp["ev_blist_one"]
     groupeve_dict = config_csp["event_dict_h"]
 
     event_dict1 = {key: value for key, value in groupeve_dict.items() if value in event_l[0]}
@@ -83,45 +90,40 @@ def train():
 
     labels = epochs.events[:, -1]
 
-    svm_clf = SVC(kernel='rbf', C=100, gamma=2, probability=True)
-    rf_clf = RandomForestClassifier(n_estimators=200, max_depth=None, random_state=42)
+    #* Divide the data into training and testing sets ( a different way using the class )
+    X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.2, random_state=42)
 
-    ensemble = VotingClassifier(estimators=[('svm', svm_clf), ('rf', rf_clf)], voting='soft')
-
+    freq_bands = config_csp["freq_bands__02"]
     # Create a new pipeline for LDA
     pipeline = Pipeline([
-        ('csp', CSP(n_components=N_COMPONENTS_CSP, reg='ledoit_wolf', log=True, norm_trace=False)),
+        ('csp', FBCSP(n_components=config_csp["n_components"], freq_bands=freq_bands, fs=config_csp["frequency_sample"], log=True, norm_trace=False)),
         ('scaler', StandardScaler()), #* StandardScaler works best
-        ('pca', PCA(n_components=N_COMPONENTS_PCA)),
-        ('voting_cs', ensemble)
+        ('pca', PCA(n_components=0.99)),
+        ('mlp', MLPClassifier(hidden_layer_sizes=[128, 256, 256], max_iter=1000, learning_rate_init=0.001, alpha=0.0005, random_state=42, learning_rate='adaptive'))
     ])
 
     #* Split the data into train/test sets
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     # Fit the pipeline to the data
-    pipeline.fit(data, labels)
-
-    #* Transform the data using the pipeline
-    # Create a new pipeline excluding the last step
-    pipeline_without_last_step = Pipeline(pipeline.steps[:-1])
-
-    # Transform the data using the new pipeline
-    processed_data = pipeline_without_last_step.transform(data)
+    pipeline.fit(X_train, y_train)
 
     #* Perform cross-validation
-    scores = cross_val_score(pipeline, data, labels, cv=cv)
+    scores = cross_val_score(pipeline, X_train, y_train, n_jobs=-1, cv=cv)
 
     print(scores)
     print("Cross_val_score:", np.mean(scores))
     print()
 
-    #* Divide the data into training and testing sets ( a different way using the class )
-    X_train, X_test, y_train, y_test = train_test_split(processed_data, labels, test_size=0.2, random_state=42)
+    # Create a new pipeline excluding the last step
+    pipeline_without_last_step = Pipeline(pipeline.steps[:-1])
 
-    eeg_obj.train_model(X_train, y_train)
+    # Transform the data using the new pipeline
+    processed_X_train = pipeline_without_last_step.transform(X_train)
+    processed_X_test = pipeline_without_last_step.transform(X_test)
+    print(processed_X_train.shape)
 
-    # eeg_obj.pred(X_test, y_test, n_preds=30)
+    eeg_obj.train_model(processed_X_train, y_train)
 
 def main():
     print("\n└─> Choose an option: (" + Fore.LIGHTWHITE_EX + Style.BRIGHT

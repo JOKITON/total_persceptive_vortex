@@ -1,16 +1,16 @@
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import VotingClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
+from sklearn.neural_network import MLPClassifier
 
 def wide_prepro_grid(json_grid):
 	grid = {}
 
 	grid["csp__n_components"] = json_grid["csp__n_components_00"]
-	# grid["pca__n_components"] = json_grid["pca__n_components_00"]
 
 	return grid
 
@@ -18,7 +18,6 @@ def default_prepro_grid(json_grid):
 	grid = {}
 
 	grid["csp__n_components"] = json_grid["csp__n_components_01"]
-	# grid["pca__n_components"] = json_grid["pca__n_components_01"]
 
 	return grid
 
@@ -26,7 +25,30 @@ def narrow_prepro_grid(json_grid):
 	grid = {}
 
 	grid["csp__n_components"] = json_grid["csp__n_components_02"]
-	# grid["pca__n_components"] = json_grid["pca__n_components_02"]
+
+def wide_mlp_grid(json_grid):
+	grid = {}
+
+	grid["mlp__max_iter"] = json_grid["mlp__max_iter_00"]
+	grid["mlp__hidden_layer_sizes"] = json_grid["mlp__hidden_layer_sizes_00"]
+
+	return grid
+
+def default_mlp_grid(json_grid):
+	grid = {}
+
+	grid["mlp__max_iter"] = json_grid["mlp__max_iter_01"]
+	grid["mlp__hidden_layer_sizes"] = json_grid["mlp__hidden_layer_sizes_01"]
+
+	return grid
+
+def narrow_mlp_grid(json_grid):
+	grid = {}
+
+	grid["mlp__max_iter"] = json_grid["mlp__max_iter_02"]
+	grid["mlp__hidden_layer_sizes"] = json_grid["mlp__hidden_layer_sizes_02"]
+
+	return grid
 
 def wide_svm_grid(json_grid):
 	grid = {}
@@ -40,15 +62,15 @@ def default_svm_grid(json_grid):
 	grid = {}
 
 	grid["svm__C"] = json_grid["svm__C_01"]
-	grid["svm__gamma"] = json_grid["svm__gamma_01"]
+	grid["svm__gamma"] = json_grid["svm__gamma_02"]
 
 	return grid
 
 def narrow_svm_grid(json_grid):
 	grid = {}
 
-	grid["svm__C"] = json_grid["svm__C_02"]
-	grid["svm__gamma"] = json_grid["svm__gamma_02"]
+	grid["svm__C"] = json_grid["svm__C_01"]
+	grid["svm__gamma"] = json_grid["svm__gamma_03"]
 
 	return grid
 
@@ -81,7 +103,7 @@ def wide_rf_grid(json_grid):
 def grid_finder(json_grid, ml_type, grid_type):
 	clf = None
 	pipeline = Pipeline([])
-	pre_grid, svm_grid, rf_grid = None, None, None
+	pre_grid, svm_grid, rf_grid, mlp_grid = None, None, None, None
 	if ml_type == 'preprocess':
 		pipeline.steps.append(['clf', SVC()])
 		if grid_type == 'default':
@@ -117,6 +139,18 @@ def grid_finder(json_grid, ml_type, grid_type):
 		else:
 			print("Invalid grid type")
 		return rf_grid, pipeline
+	elif ml_type == 'mlp':
+		clf = MLPClassifier()
+		pipeline.steps.append(['mlp', clf])
+		if grid_type == 'default':
+			mlp_grid = default_mlp_grid(json_grid)
+		elif grid_type == 'wide':
+			mlp_grid = wide_mlp_grid(json_grid)
+		elif grid_type == 'narrow':
+			mlp_grid = narrow_mlp_grid(json_grid)
+		else:
+			print("Invalid grid type")
+		return mlp_grid, pipeline
 	else:
 		print("Invalid ML type")
 	return None, None
@@ -124,8 +158,19 @@ def grid_finder(json_grid, ml_type, grid_type):
 def grid_search(X, y, pipeline, param_grid):
 	cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 	
-	grid_search = GridSearchCV(pipeline, param_grid, cv=cv, scoring='f1_weighted', verbose=0, error_score='raise')
+	grid_search = GridSearchCV(pipeline, param_grid, cv=cv, n_jobs=-1, scoring='accuracy', error_score='raise')
+	""" grid_search = RandomizedSearchCV(
+		pipeline,
+		param_distributions=param_grid,
+		n_iter=30,
+		cv=cv,
+		n_jobs=-1,
+		scoring='accuracy',
+		verbose=0,
+		error_score='raise'
+	) """
 	grid_search.fit(X, y)
 
 	print("Best parameters:", grid_search.best_params_)
 	print("Best accuracy:", grid_search.best_score_)
+	return grid_search.best_params_, grid_search.best_score_
